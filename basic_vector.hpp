@@ -109,7 +109,7 @@ Numvec<T>::Numvec(T *array, size_type length)
 
 template <typename T>
 Numvec<T>::Numvec(initializer_list<T> lst)
-    : len{lst.size()}, reserved{len * 4}, arr{new T[reserved]}
+    : len{static_cast<size_type>(lst.size())}, reserved{len * 4}, arr{new T[reserved]}
 {
     uninitialized_copy(lst.begin(), lst.end(), arr);
 }
@@ -117,7 +117,7 @@ Numvec<T>::Numvec(initializer_list<T> lst)
 template <typename T>
 Numvec<T> &Numvec<T>::operator=(initializer_list<T> lst)
 {
-    len = lst.size();
+    len = static_cast<size_type>(lst.size());
     reserved = len * 4;
     arr = new T[reserved];
 
