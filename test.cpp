@@ -22,37 +22,49 @@ std::ostream &operator<<(std::ostream &os, const Numvec<T> &vec)
 }
 
 template <typename __first, typename __second>
-bool _pack_equal(__first first, __second second)
+bool pack_equal(__first first, __second second)
 {
     return first == second;
 }
 
 template <typename __first, typename __second, typename... __args>
-bool _pack_equal(__first first, __second second, __args... args)
+bool pack_equal(__first first, __second second, __args... args)
 {
-    return first == second && _pack_equal(second, args...);
+    return first == second && pack_equal(second, args...);
 }
 
-// template <typename T>
-// bool check_meq()
-// {
-//     for(int i = 0; i < lst.size() - 1; i++)
-//     {
-//         if(lst[i] != lst[i + 1]) return false;
-//     }
-
-//     return true;
-// }
+Numvec<int> test_move()
+{
+    return {1, 2, 3};
+}
 
 int main()
 {
-    const Numvec<int> a1{};
-    const Numvec<int> a2 = {};
-    const Numvec<int> a3{a1};
-    const Numvec<int> a4 = a1;
-    const Numvec<int> a5(0);
+    //testing constructors and assignments
+    using ntype = Numvec<int>;
+    using cntype = const ntype;
+    cntype a1{};
+    cntype a2 = {};
+    cntype a3{a1};
+    cntype a4 = a1;
+    cntype a5(0);
 
-    // std::cout << (a1 == a2 == a3 == a4 == a5);
-    // std::cout << check_multiple_equality(1, 1, 1);
-    std::cout << _pack_equal(1, 2, 3, 4, 5);
+    std::cout << pack_equal(a1, a2, a3, a4, a5);
+
+    cntype b1{1, 2, 3};
+    cntype b2 = {1, 2, 3};
+    cntype b3 = b2;
+
+    std::cout << pack_equal(b1, b2, b3);
+
+    cntype c1{0, 0};
+    cntype c2(2);
+
+    std::cout << pack_equal(c1, c2);
+
+    cntype d1{test_move()};
+    cntype d2 = test_move();
+
+    std::cout << pack_equal(d1, d2);
+
 }
