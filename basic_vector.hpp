@@ -6,7 +6,7 @@ using namespace std;
 
 namespace forvec
 {
-const unsigned int START_RESERVED = 5;
+const unsigned int DEFAULT_RESERVED = 5;
 
 template <typename T>
 class Numvec
@@ -49,7 +49,7 @@ public:
 
     // modify
     void push_back(const T &elem);
-    void plus_back(const Numvec<T> vec);
+    void plus_back(const Numvec<T> &vec);
     void pop_back();
     void clear() noexcept;
 
@@ -59,7 +59,7 @@ public:
 private:
     T *arr;
     size_type len = 0;
-    size_type reserved = START_RESERVED;
+    size_type reserved = DEFAULT_RESERVED;
 
     int _check_length(int length);
     void reallocate();
@@ -159,7 +159,7 @@ Numvec<T>::Numvec(Numvec<T> &&obj) noexcept
 template <typename T>
 Numvec<T> &Numvec<T>::operator=(Numvec<T> &&obj)
 {
-    len = obj.size(); 
+    len = obj.size();
     arr = obj.data();
 }
 
@@ -179,7 +179,7 @@ template <typename T>
 T &Numvec<T>::at(size_type n) const
 {
     if (n >= len)
-        throw BadLength {};
+        throw BadLength{};
 
     return arr[n];
 }
@@ -212,7 +212,7 @@ void Numvec<T>::push_back(const T &elem)
 }
 
 template <typename T>
-void Numvec<T>::plus_back(const Numvec<T> vec)
+void Numvec<T>::plus_back(const Numvec<T> &vec)
 {
     size_type after_len = len + vec.size();
     if (after_len > reserved)
@@ -224,6 +224,7 @@ void Numvec<T>::plus_back(const Numvec<T> vec)
     for (size_type i = len, j = 0; i < after_len; i++, j++)
     {
         arr[i] = vec[j];
+        len++;
     }
 }
 

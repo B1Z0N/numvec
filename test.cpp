@@ -91,11 +91,34 @@ int main()
 
     int array[] = {1, 2, 3};
     int len = sizeof(array) / sizeof(int);
-    ntype arr = test_data(array, len);
+    cntype arr = test_data(array, len);
     std::cout << array_equality(array, arr.data(), len, arr.size());
 
     std::cout << a1.is_empty() << !e1.is_empty();
 
     // modify functionality
-    
+    ntype f1 {1, 2};
+    ntype f2 {1, 2, 3};
+    ntype f3 {1, 2, 3, 4, 5, 6};
+    ntype f4 {1, 2, 3, 1, 2, 3, 4, 5, 6};
+
+    f1.push_back(3);
+
+    std::cout << (f1 == f2);
+
+    f1.push_back(4);
+    f1.push_back(5);
+    f1.push_back(6);
+
+    std::cout << (f1 == f3);
+
+    f1.pop_back();
+    f1.pop_back();
+    f1.pop_back();
+
+    std::cout << (f1 == f2);
+
+    f2.plus_back(f3);
+
+    std::cout << (f2 == f4);
 }
