@@ -103,7 +103,7 @@ Numvec<T>::Numvec(T *array, size_type length)
 {
     for (size_type i = 0; i < length; i++)
     {
-        arr[i] = T();
+        arr[i] = array[i];
     }
 }
 

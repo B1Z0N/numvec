@@ -3,6 +3,8 @@
 
 using namespace forvec;
 
+using uint = unsigned int;
+
 template <typename T>
 std::ostream &operator<<(std::ostream &os, const Numvec<T> &vec)
 // output for debugging
@@ -37,7 +39,22 @@ Numvec<int> test_move()
 {
     return {1, 2, 3};
 }
+Numvec<int> test_data(int *arr, int len)
+{
+    return {arr, static_cast<Numvec<int>::size_type>(len)};
+}
 
+template <typename T>
+bool array_equality(T * a1, T * a2, uint len1, uint len2)
+{
+    if (len1 != len2) return false;
+
+    for(int i = 0; i < len1; i++)
+    {
+        if(a1[i] != a2[i]) return false;
+    }
+    return true;
+}
 int main()
 {
     //testing constructors and assignments
@@ -67,4 +84,18 @@ int main()
 
     std::cout << pack_equal(d1, d2);
 
+    // size and capacity tests
+    using init_int = std::initializer_list<int>;
+    cntype e1{1, 2, 3, 4};
+    std::cout << (e1.size() == 4) << (e1.capacity() == 4 * e1.size());
+
+    int array[] = {1, 2, 3};
+    int len = sizeof(array) / sizeof(int);
+    ntype arr = test_data(array, len);
+    std::cout << array_equality(array, arr.data(), len, arr.size());
+
+    std::cout << a1.is_empty() << !e1.is_empty();
+
+    // modify functionality
+    
 }
