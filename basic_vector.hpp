@@ -6,7 +6,7 @@ using namespace std;
 
 namespace forvec
 {
-const unsigned int DEFAULT_RESERVED = 5;
+const unsigned int DEFAULT_RESERVED = 4;
 
 template <typename T>
 class Numvec
@@ -22,16 +22,16 @@ public:
 
     // constructors, copy, move, destructors
     Numvec() noexcept;
-    explicit Numvec(size_type length); // constructors
-    Numvec(T *array, size_type length);
-    Numvec(initializer_list<T> lst);
-    Numvec<T> &operator=(initializer_list<T> lst);
+    explicit Numvec(size_type); // constructors
+    Numvec(T *array, size_type);
+    Numvec(initializer_list<T>);
+    Numvec<T> &operator=(initializer_list<T>);
 
-    Numvec(const Numvec<T> &obj); // copy operations
-    Numvec<T> &operator=(const Numvec<T> &obj);
+    Numvec(const Numvec<T> &); // copy operations
+    Numvec<T> &operator=(const Numvec<T> &);
 
-    Numvec(Numvec<T> &&obj) noexcept; // move operations
-    Numvec<T> &operator=(Numvec<T> &&obj);
+    Numvec(Numvec<T> &&) noexcept; // move operations
+    Numvec<T> &operator=(Numvec<T> &&);
 
     ~Numvec();
 
@@ -41,14 +41,14 @@ public:
     bool is_empty() const;
 
     // element access
-    T &at(size_type n) const;
-    T &operator[](size_type n) const;
+    T &at(size_type) const;
+    T &operator[](size_type) const;
     T *data() const;
     T &front() const;
     T &back() const;
 
     // modify
-    void push_back(const T &elem);
+    void push_back(const T &);
     void plus_back(const Numvec<T> &vec);
     void pop_back();
     void clear() noexcept;
@@ -86,14 +86,13 @@ Numvec<T>::Numvec() noexcept
 
 template <typename T>
 Numvec<T>::Numvec(typename Numvec<T>::size_type n)
+// :len{n}, reserved{n ? len << 2 : reserved}, arr{n ? new T[reserved]() : nullptr}
 {
-    reserved = n << 2; // n * 4
+    size_type i;
+    reserved = n << 2;
     arr = new T[reserved];
-    for (size_type i = 0; i < n; i++)
-    {
-        arr[i] = T(); // default constructor call
-    }
-
+    for (i = 0; i < n; ++i)
+        arr[i] = T();
     len = n;
 }
 
@@ -125,31 +124,32 @@ Numvec<T> &Numvec<T>::operator=(initializer_list<T> lst)
 }
 
 template <typename T>
-Numvec<T>::Numvec(const Numvec<T> &obj)
-    : len{obj.size()}, reserved{obj.capacity()}, arr{new T[reserved]}
+Numvec<T>::Numvec(const Numvec<T> &other)
 {
-    for (size_type i = 0; i < len; i++)
+    size_type i;
+    reserved = other.reserved;
+    arr = new T[reserved];
+    for (i = 0; i < other.len; ++i)
     {
-        arr[i] = obj[i];
+        arr[i] = other.arr[i];
     }
+    len = other.len;
 }
 
 template <typename T>
-Numvec<T> &Numvec<T>::operator=(const Numvec<T> &obj)
+Numvec<T> &Numvec<T>::operator=(const Numvec<T> &other)
 {
-    len = obj.size();
-    arr = new T[reserved];
-
-    if (reserved < len)
+    size_type i;
+    if (reserved < other.len)
     {
-        reserved = len << 2;
+        reserved = other.len << 2;
         reallocate();
     }
+    for (i = 0; i < other.len; ++i)
+        arr[i] = other.arr[i];
+    len = other.len;
 
-    for (size_type i = 0; i < len; i++)
-    {
-        arr[i] = obj[i];
-    }
+    return *this;
 }
 
 template <typename T>
@@ -157,10 +157,19 @@ Numvec<T>::Numvec(Numvec<T> &&obj) noexcept
     : len{obj.size()}, arr{obj.data()} {}
 
 template <typename T>
-Numvec<T> &Numvec<T>::operator=(Numvec<T> &&obj)
+Numvec<T> &Numvec<T>::operator=(Numvec<T> &&other)
 {
-    len = obj.size();
-    arr = obj.data();
+    size_type i;
+    if (reserved < other.len)
+    {
+        reserved = other.len << 2;
+        reallocate();
+    }
+    for (i = 0; i < other.len; ++i)
+        arr[i] = std::move(other.arr[i]);
+    len = other.len;
+
+    return *this;
 }
 
 template <typename T>
@@ -204,7 +213,7 @@ void Numvec<T>::push_back(const T &elem)
 {
     if (len == reserved)
     {
-        reserved = reserved << 2;
+        reserved <<= 2;
         reallocate();
     }
 
@@ -224,8 +233,9 @@ void Numvec<T>::plus_back(const Numvec<T> &vec)
     for (size_type i = len, j = 0; i < after_len; i++, j++)
     {
         arr[i] = vec[j];
-        len++;
     }
+
+    len = after_len;
 }
 
 template <typename T>

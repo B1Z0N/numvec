@@ -6,55 +6,17 @@ using namespace forvec;
 using uint = unsigned int;
 
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const Numvec<T> &vec)
-// output for debugging
-{
-    if (vec.is_empty())
-        return os << "[ ]";
-
-    os << "[" << vec[0];
-    if (vec.size() >= 1)
-    {
-        for (int i = 1; i < vec.size(); i++)
-        {
-            os << ", " << vec[i];
-        }
-    }
-    return os << "]";
-}
-
+ostream &operator<<(ostream &os, const Numvec<T> &vec);
 template <typename __first, typename __second>
-bool pack_equal(__first first, __second second)
-{
-    return first == second;
-}
-
+bool pack_equal(__first first, __second second);
 template <typename __first, typename __second, typename... __args>
-bool pack_equal(__first first, __second second, __args... args)
-{
-    return first == second && pack_equal(second, args...);
-}
+bool pack_equal(__first first, __second second, __args... args);
 
-Numvec<int> test_move()
-{
-    return {1, 2, 3};
-}
-Numvec<int> test_data(int *arr, int len)
-{
-    return {arr, static_cast<Numvec<int>::size_type>(len)};
-}
-
+Numvec<int> test_move();
+Numvec<int> test_data(int *arr, int len);
 template <typename T>
-bool array_equality(T * a1, T * a2, uint len1, uint len2)
-{
-    if (len1 != len2) return false;
+bool array_equality(T * a1, T * a2, uint len1, uint len2);
 
-    for(int i = 0; i < len1; i++)
-    {
-        if(a1[i] != a2[i]) return false;
-    }
-    return true;
-}
 int main()
 {
     //testing constructors and assignments
@@ -121,4 +83,55 @@ int main()
     f2.plus_back(f3);
 
     std::cout << (f2 == f4);
+}
+
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Numvec<T> &vec)
+// output for debugging
+{
+    if (vec.is_empty())
+        return os << "[ ]";
+
+    os << "[" << vec[0];
+    if (vec.size() >= 1)
+    {
+        for (int i = 1; i < vec.size(); i++)
+        {
+            os << ", " << vec[i];
+        }
+    }
+    return os << "]";
+}
+
+template <typename __first, typename __second>
+bool pack_equal(__first first, __second second)
+{
+    return first == second;
+}
+
+template <typename __first, typename __second, typename... __args>
+bool pack_equal(__first first, __second second, __args... args)
+{
+    return first == second && pack_equal(second, args...);
+}
+
+Numvec<int> test_move()
+{
+    return {1, 2, 3};
+}
+Numvec<int> test_data(int *arr, int len)
+{
+    return {arr, static_cast<Numvec<int>::size_type>(len)};
+}
+
+template <typename T>
+bool array_equality(T * a1, T * a2, uint len1, uint len2)
+{
+    if (len1 != len2) return false;
+
+    for(int i = 0; i < len1; i++)
+    {
+        if(a1[i] != a2[i]) return false;
+    }
+    return true;
 }
